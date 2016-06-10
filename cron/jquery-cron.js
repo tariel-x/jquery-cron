@@ -115,54 +115,50 @@
     // options for days of month
     var str_opt_dom = "";
     for (var i = 1; i < 32; i++) {
-        if (i == 1 || i == 21 || i == 31) { var suffix = "st"; }
-        else if (i == 2 || i == 22) { var suffix = "nd"; }
-        else if (i == 3 || i == 23) { var suffix = "rd"; }
-        else { var suffix = "th"; }
-        str_opt_dom += "<option value='"+i+"'>" + i + suffix + "</option>\n";
+        str_opt_dom += "<option value='"+i+"'>" + i + "</option>\n";
     }
 
     // options for months
     var str_opt_month = "";
-    var months = ["January", "February", "March", "April",
-                  "May", "June", "July", "August",
-                  "September", "October", "November", "December"];
+    var months = ["января", "февраля", "марта", "апреля",
+                  "мая", "июня", "июля", "августа",
+                  "сентября", "октября", "ноября", "декабря"];
     for (var i = 0; i < months.length; i++) {
         str_opt_month += "<option value='"+(i+1)+"'>" + months[i] + "</option>\n";
     }
 
     // options for day of week
     var str_opt_dow = "";
-    var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
-                "Friday", "Saturday"];
+    var days = ["воскресенье", "понедельник", "вторник", "среду", "четверг",
+                "пятницу", "субботу"];
     for (var i = 0; i < days.length; i++) {
         str_opt_dow += "<option value='"+i+"'>" + days[i] + "</option>\n";
     }
 
     // options for period
     var str_opt_period = "";
-    var periods = ["minute", "hour", "day", "week", "month", "year"];
+    var periods = ["минуту", "час", "день", "неделю", "месяц", "год"];
     for (var i = 0; i < periods.length; i++) {
         str_opt_period += "<option value='"+periods[i]+"'>" + periods[i] + "</option>\n";
     }
 
     // display matrix
     var toDisplay = {
-        "minute" : [],
-        "hour"   : ["mins"],
-        "day"    : ["time"],
-        "week"   : ["dow", "time"],
-        "month"  : ["dom", "time"],
-        "year"   : ["dom", "month", "time"]
+        "минуту" : [],
+        "час"   : ["mins"],
+        "день"    : ["time"],
+        "неделю"   : ["dow", "time"],
+        "месяц"  : ["dom", "time"],
+        "год"   : ["dom", "месяц", "time"]
     };
 
     var combinations = {
-        "minute" : /^(\*\s){4}\*$/,                    // "* * * * *"
-        "hour"   : /^\d{1,2}\s(\*\s){3}\*$/,           // "? * * * *"
-        "day"    : /^(\d{1,2}\s){2}(\*\s){2}\*$/,      // "? ? * * *"
-        "week"   : /^(\d{1,2}\s){2}(\*\s){2}\d{1,2}$/, // "? ? * * ?"
-        "month"  : /^(\d{1,2}\s){3}\*\s\*$/,           // "? ? ? * *"
-        "year"   : /^(\d{1,2}\s){4}\*$/                // "? ? ? ? *"
+        "минуту" : /^(\*\s){4}\*$/,                    // "* * * * *"
+        "час"   : /^\d{1,2}\s(\*\s){3}\*$/,           // "? * * * *"
+        "день"    : /^(\d{1,2}\s){2}(\*\s){2}\*$/,      // "? ? * * *"
+        "неделю"   : /^(\d{1,2}\s){2}(\*\s){2}\d{1,2}$/, // "? ? * * ?"
+        "месяц"  : /^(\d{1,2}\s){3}\*\s\*$/,           // "? ? ? * *"
+        "год"   : /^(\d{1,2}\s){4}\*$/                // "? ? ? ? *"
     };
 
     // ------------------ internal functions ---------------
@@ -237,35 +233,35 @@
         var min = hour = day = month = dow = "*";
         var selectedPeriod = b["period"].find("select").val();
         switch (selectedPeriod) {
-            case "minute":
+            case "минуту":
                 break;
 
-            case "hour":
+            case "час":
                 min = b["mins"].find("select").val();
                 break;
 
-            case "day":
+            case "день":
                 min  = b["time"].find("select.cron-time-min").val();
                 hour = b["time"].find("select.cron-time-hour").val();
                 break;
 
-            case "week":
+            case "неделю":
                 min  = b["time"].find("select.cron-time-min").val();
                 hour = b["time"].find("select.cron-time-hour").val();
                 dow  =  b["dow"].find("select").val();
                 break;
 
-            case "month":
+            case "месяц":
                 min  = b["time"].find("select.cron-time-min").val();
                 hour = b["time"].find("select.cron-time-hour").val();
                 day  = b["dom"].find("select").val();
                 break;
 
-            case "year":
+            case "год":
                 min  = b["time"].find("select.cron-time-min").val();
                 hour = b["time"].find("select.cron-time-hour").val();
                 day  = b["dom"].find("select").val();
-                month = b["month"].find("select").val();
+                month = b["месяц"].find("select").val();
                 break;
 
             default:
@@ -306,7 +302,7 @@
             }
 
             block["period"] = $("<span class='cron-period'>"
-                    + "Every <select name='cron-period'>" + custom_periods
+                    + "Каждый(ую) <select name='cron-period'>" + custom_periods
                     + str_opt_period + "</select> </span>")
                 .appendTo(this)
                 .data("root", this);
@@ -317,7 +313,7 @@
             if (o.useGentleSelect) select.gentleSelect(eo);
 
             block["dom"] = $("<span class='cron-block cron-block-dom'>"
-                    + " on the <select name='cron-dom'>" + str_opt_dom
+                    + " <select name='cron-dom'>" + str_opt_dom
                     + "</select> </span>")
                 .appendTo(this)
                 .data("root", this);
@@ -325,18 +321,18 @@
             select = block["dom"].find("select").data("root", this);
             if (o.useGentleSelect) select.gentleSelect(o.domOpts);
 
-            block["month"] = $("<span class='cron-block cron-block-month'>"
-                    + " of <select name='cron-month'>" + str_opt_month
+            block["месяц"] = $("<span class='cron-block cron-block-month'>"
+                    + " <select name='cron-month'>" + str_opt_month
                     + "</select> </span>")
                 .appendTo(this)
                 .data("root", this);
 
-            select = block["month"].find("select").data("root", this);
+            select = block["месяц"].find("select").data("root", this);
             if (o.useGentleSelect) select.gentleSelect(o.monthOpts);
 
             block["mins"] = $("<span class='cron-block cron-block-mins'>"
-                    + " at <select name='cron-mins'>" + str_opt_mih
-                    + "</select> minutes past the hour </span>")
+                    + " в <select name='cron-mins'>" + str_opt_mih
+                    + "</select> минут(ы)</span>")
                 .appendTo(this)
                 .data("root", this);
 
@@ -344,7 +340,7 @@
             if (o.useGentleSelect) select.gentleSelect(o.minuteOpts);
 
             block["dow"] = $("<span class='cron-block cron-block-dow'>"
-                    + " on <select name='cron-dow'>" + str_opt_dow
+                    + " в <select name='cron-dow'>" + str_opt_dow
                     + "</select> </span>")
                 .appendTo(this)
                 .data("root", this);
@@ -353,7 +349,7 @@
             if (o.useGentleSelect) select.gentleSelect(o.dowOpts);
 
             block["time"] = $("<span class='cron-block cron-block-time'>"
-                    + " at <select name='cron-time-hour' class='cron-time-hour'>" + str_opt_hid
+                    + " в <select name='cron-time-hour' class='cron-time-hour'>" + str_opt_hid
                     + "</select>:<select name='cron-time-min' class='cron-time-min'>" + str_opt_mih
                     + " </span>")
                 .appendTo(this)
@@ -398,9 +394,9 @@
                 var d = cron_str.split(" ");
                 var v = {
                     "mins"  : d[0],
-                    "hour"  : d[1],
+                    "час"  : d[1],
                     "dom"   : d[2],
-                    "month" : d[3],
+                    "месяц" : d[3],
                     "dow"   : d[4]
                 };
 
@@ -409,7 +405,7 @@
                 for (var i = 0; i < targets.length; i++) {
                     var tgt = targets[i];
                     if (tgt == "time") {
-                        var btgt = block[tgt].find("select.cron-time-hour").val(v["hour"]);
+                        var btgt = block[tgt].find("select.cron-time-hour").val(v["час"]);
                         if (useGentleSelect) btgt.gentleSelect("update");
 
                         btgt = block[tgt].find("select.cron-time-min").val(v["mins"]);
