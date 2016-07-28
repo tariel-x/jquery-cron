@@ -156,7 +156,7 @@
         "минуту" : /^(\*\s){4}\*$/,                    // "* * * * *"
         "час"   : /^\d{1,2}\s(\*\s){3}\*$/,           // "? * * * *"
         "день"    : /^(\d{1,2}\s){2}(\*\s){2}\*$/,      // "? ? * * *"
-        "неделю"   : /^(\d{1,2}\s){2}(\*\s){2}\d{1,2}$/, // "? ? * * ?"
+        "неделю"   : /^(\d{1,2}\s){2}(\*\s){2}[\d,]+$/, // "? ? * * ?"
         "месяц"  : /^(\d{1,2}\s){3}\*\s\*$/,           // "? ? ? * *"
         "год"   : /^(\d{1,2}\s){4}\*$/                // "? ? ? ? *"
     };
@@ -180,7 +180,7 @@
         }
 
         // check format of initial cron value
-        var valid_cron = /^((\d{1,2}|\*)\s){4}(\d{1,2}|\*)$/
+        var valid_cron = /^((\d{1,2}|\*)\s){4}([\d,]+|\*)$/
         if (typeof cron_str != "string" || !valid_cron.test(cron_str)) {
             $.error("cron: invalid initial value");
             return undefined;
@@ -193,8 +193,20 @@
         var maxval = [59, 23, 31, 12,  6];
         for (var i = 0; i < d.length; i++) {
             if (d[i] == "*") continue;
-            var v = parseInt(d[i]);
-            if (defined(v) && v <= maxval[i] && v >= minval[i]) continue;
+            if (d[i].indexOf(",") !== -1) {
+                var d_part = d[i].split(",");
+                var correct = true;
+                for (var j = 0; j < d_part.length; j++) {
+                    var v_part = parseInt(d_part[j]);
+                    if (!defined(v_part) || v_part > maxval[i] || v_part < minval[i]) {
+                        correct = false;
+                    }
+                }
+                if (correct) continue;
+            } else {
+                var v = parseInt(d[i]);
+                if (defined(v) && v <= maxval[i] && v >= minval[i]) continue;
+            }
 
             $.error("cron: invalid value found (col "+(i+1)+") in " + o.initial);
             return undefined;
@@ -399,7 +411,7 @@
                     "месяц" : d[3],
                     "dow"   : d[4]
                 };
-
+                console.log(v);
                 // update appropriate select boxes
                 var targets = toDisplay[t];
                 for (var i = 0; i < targets.length; i++) {
@@ -410,7 +422,11 @@
 
                         btgt = block[tgt].find("select.cron-time-min").val(v["mins"]);
                         if (useGentleSelect) btgt.gentleSelect("update");
-                    } else {;
+                    } else if (tgt == "dow") {
+                        var v_parts = v[tgt].split(",");
+                        var btgt = block[tgt].find("select").val(v_parts);
+                        if (useGentleSelect) btgt.gentleSelect("update");
+                    } else {
                         var btgt = block[tgt].find("select").val(v[tgt]);
                         if (useGentleSelect) btgt.gentleSelect("update");
                     }
